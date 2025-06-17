@@ -12,7 +12,7 @@ const consumerKey = 'ociTzbSG76MmEj6eo1TKYg8S8HopOM4w7qA7PQmkDHZqednz';
 const consumerSecret = '4BRkLYRsj6rvEXhlBX4CK61PZ5iJf75habGquFmshrvVVdCwcRY6LsNGaUnWRIjc';
 const businessShortCode = '174379'; // Sandbox PayBill
 const passkey = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919';
-const callbackURL = 'https://mydomain.com/callback'; // Replace with your actual callback URL
+const callbackURL = 'https://quickconnect-backend-psqq.onrender.com/callback'; // Replace with your actual callback URL
 // STK Push Route
 app.post('/api/stkpush', async (req, res) => {
   try {
@@ -68,9 +68,7 @@ app.post('/api/stkpush', async (req, res) => {
     res.status(500).json({ error: 'Payment request failed.' });
   }
 });
-
-// Start the server
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`✅ Backend server running on http://localhost:${PORT}`);
+  console.log(`✅ Backend server running on port ${PORT}`);
 });
