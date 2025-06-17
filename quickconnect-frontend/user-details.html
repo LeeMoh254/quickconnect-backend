@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Applicant Info - QuickConnect</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f7f7f7;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 6px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    #name-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    #name-container input {
+      flex: 1;
+    }
+    button {
+      margin-top: 20px;
+      background-color: #ff4081;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 1.1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #e03570;
+    }
+    .error {
+      color: red;
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Applicant Information</h2>
+
+  <form id="applicantForm" onsubmit="submitDetails(event)">
+    <div id="name-container">
+      <input type="text" id="firstName" placeholder="First Name" required />
+      <input type="text" id="lastName" placeholder="Last Name" required />
+    </div>
+
+    <label for="idNumber">ID Number</label>
+    <input type="text" id="idNumber" required />
+
+    <label for="age">Age</label>
+    <input type="number" id="age" min="21" required />
+
+    <label for="phoneNumber">Phone Number (must start with 254)</label>
+    <input type="text" id="phoneNumber" placeholder="e.g. 254712345678" required />
+
+    <label for="hookupType">Type of Hookup</label>
+    <select id="hookupType" required>
+      <option value="" disabled selected>Select Type</option>
+      <option value="host">I can host</option>
+      <option value="neutral">Neutral place</option>
+    </select>
+
+    <label for="selfie">Upload Selfie</label>
+    <input type="file" id="selfie" accept="image/*" required />
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    async function submitDetails(event) {
+      event.preventDefault();
+
+      const firstName = document.getElementById("firstName").value.trim();
+      const lastName = document.getElementById("lastName").value.trim();
+      const idNumber = document.getElementById("idNumber").value.trim();
+      const age = document.getElementById("age").value.trim();
+      const phone = document.getElementById("phoneNumber").value.trim();
+      const hookupType = document.getElementById("hookupType").value;
+      const selfie = document.getElementById("selfie").files[0];
+
+      if (!phone.startsWith("254")) {
+        alert("Phone number must start with 254.");
+        return;
+      }
+
+      if (!firstName || !lastName || !idNumber || !age || !hookupType || !selfie) {
+        alert("Please fill in all the fields.");
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:3000/api/stkpush", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            phone: phone,
+            amount: 99,
+            firstName,
+            lastName,
+            idNumber,
+            age
+          })
+        });
+
+        const contentType = response.headers.get("content-type");
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error("Server error: " + errorText);
+        }
+
+        if (!contentType.includes("application/json")) {
+          throw new Error("Unexpected response format.");
+        }
+
+        const data = await response.json();
+
+        // Show thank-you message
+        document.body.innerHTML = `
+          <div style="text-align: center; font-family: Arial, sans-serif; padding: 40px;">
+            <h2 style="color: green;">Thank you!</h2>
+            <p>Your details have been received.</p>
+            <p>Hang tight, we will contact you shortly and match you up.</p>
+            <button onclick="window.location.href='index.html'" style="
+              margin-top: 20px;
+              background-color: #ff4081;
+              color: white;
+              border: none;
+              padding: 12px 20px;
+              font-size: 1rem;
+              border-radius: 5px;
+              cursor: pointer;
+            ">Start Over</button>
+          </div>
+        `;
+      } catch (error) {
+        console.error(error);
+        document.body.innerHTML = `
+          <div style="text-align: center; font-family: Arial, sans-serif; padding: 40px;">
+            <h2 style="color: red;">Oops!</h2>
+            <p>Something went wrong while sending your payment request.</p>
+            <p>Please try again in a few seconds.</p>
+            <button onclick="location.reload()" style="
+              margin-top: 20px;
+              background-color: #e03570;
+              color: white;
+              border: none;
+              padding: 12px 20px;
+              font-size: 1rem;
+              border-radius: 5px;
+              cursor: pointer;
+            ">Try Again</button>
+          </div>
+        `;
+      }
+    }
+  </script>
+
+</body>
+</html>

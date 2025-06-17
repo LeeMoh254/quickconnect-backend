@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Thank You - QuickConnect</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+      background: #f9f9f9;
+      color: #333;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: #4caf50;
+    }
+    p {
+      font-size: 1.2rem;
+      margin: 20px 0;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 1rem;
+      background-color: #ff4081;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #e03570;
+    }
+  </style>
+</head>
+<body>
+  <h1>Thank You!</h1>
+  <p>Your details have been received.</p>
+  <p>We will contact you shortly and match you up.</p>
+  <button onclick="goHome()">Start Over</button>
+
+  <script>
+    function goHome() {
+      window.location.href = "index.html"; // adjust if your homepage filename differs
+    }
+  </script>
+</body>
+</html>
